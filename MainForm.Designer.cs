@@ -52,6 +52,8 @@ namespace ConcreteStair
             this.saveLoad = new Tekla.Structures.Dialog.UIControls.SaveLoad();
             this.treadTickness = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.nosingRadiusBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.ParametersTabPage.SuspendLayout();
@@ -115,6 +117,8 @@ namespace ConcreteStair
             this.structuresExtender.SetAttributeName(this.ParametersTabPage, null);
             this.structuresExtender.SetAttributeTypeName(this.ParametersTabPage, null);
             this.structuresExtender.SetBindPropertyName(this.ParametersTabPage, null);
+            this.ParametersTabPage.Controls.Add(this.label10);
+            this.ParametersTabPage.Controls.Add(this.nosingRadiusBox);
             this.ParametersTabPage.Controls.Add(this.label9);
             this.ParametersTabPage.Controls.Add(this.treadTickness);
             this.ParametersTabPage.Controls.Add(this.floorThickness);
@@ -376,6 +380,30 @@ namespace ConcreteStair
             this.label9.TabIndex = 18;
             this.label9.Text = "Tread Tickness";
             // 
+            // label10
+            // 
+            this.structuresExtender.SetAttributeName(this.label10, null);
+            this.structuresExtender.SetAttributeTypeName(this.label10, null);
+            this.label10.AutoSize = true;
+            this.structuresExtender.SetBindPropertyName(this.label10, null);
+            this.label10.Location = new System.Drawing.Point(520, 220);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(102, 16);
+            this.label10.TabIndex = 19;
+            this.label10.Text = "Nosing Radius";
+            // 
+            // nosingRadiusBox
+            // 
+            this.structuresExtender.SetAttributeName(this.nosingRadiusBox, "nosingRadiusBox");
+            this.structuresExtender.SetAttributeTypeName(this.nosingRadiusBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.nosingRadiusBox, null);
+            this.nosingRadiusBox.Location = new System.Drawing.Point(523, 240);
+            this.nosingRadiusBox.Margin = new System.Windows.Forms.Padding(4);
+            this.nosingRadiusBox.Name = "nosingRadiusBox";
+            this.nosingRadiusBox.Size = new System.Drawing.Size(132, 22);
+            this.nosingRadiusBox.TabIndex = 20;
+            // 
             // MainForm
             // 
             this.structuresExtender.SetAttributeName(this, null);
@@ -422,5 +450,7 @@ namespace ConcreteStair
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox treadTickness;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox nosingRadiusBox;
+        private System.Windows.Forms.Label label10;
     }
 }

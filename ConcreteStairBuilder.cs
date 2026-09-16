@@ -22,6 +22,7 @@ namespace ConcreteStair
         public double NumberOfTreads { get; set; }
         public double FirstRiser { get; set; }
         public double StairWidthProfile { get; set; }
+        public double NosingRadius { get; set; }
 
         public ConcreteStairBuilder(Point startPoint, Point endPoint)
         {
@@ -87,25 +88,50 @@ namespace ConcreteStair
 
             List<ContourPoint> treadProfilePoints = new List<ContourPoint>();
             
-            // Start traversing from the bottom of the first riser
+            // Create the chamfer object if a radius is provided
+            Chamfer nosingChamfer = null;
+            if (NosingRadius > 0)
+            {
+                nosingChamfer = new Chamfer(NosingRadius, 0, Chamfer.ChamferTypeEnum.CHAMFER_ROUNDING);
+            }
+
+            double overshoot = 10d.ToMm();
+
+            // 1. Top Left Air (above and behind the start point)
+            Point topLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + Rise + overshoot).MoveTowards(runDirection, -overshoot);
+            treadProfilePoints.Add(new ContourPoint(topLeftAir, null));
+
+            // 2. Bottom Left Air (below and behind the start point)
+            Point bottomLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z - overshoot).MoveTowards(runDirection, -overshoot);
+            treadProfilePoints.Add(new ContourPoint(bottomLeftAir, null));
+
+            // 3. Bottom of Front Face (directly below the first nosing)
+            Point bottomFrontFace = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z - overshoot);
+            treadProfilePoints.Add(new ContourPoint(bottomFrontFace, null));
+
+            // 4. First Nosing
             Point currentProfilePoint = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + actualFirstRiser);
-            treadProfilePoints.Add(new ContourPoint(currentProfilePoint, null));
+            treadProfilePoints.Add(new ContourPoint(currentProfilePoint, nosingChamfer));
 
             // Generate the zigzag tread steps programmatically
             for (int i = 0; i < NumberOfTreads; i++)
             {
-                // Step horizontally to the nosing
+                // Step horizontally to the back of the tread (Inner corner of the stair)
                 currentProfilePoint = currentProfilePoint.MoveTowards(runDirection, treadRunLength);
                 treadProfilePoints.Add(new ContourPoint(currentProfilePoint, null));
 
-                // Step vertically to the next inner corner
+                // Step vertically to the top of the next riser (Outer corner / Nosing of the stair)
                 currentProfilePoint = new Point(currentProfilePoint.X, currentProfilePoint.Y, currentProfilePoint.Z + treadRiseHeight);
-                treadProfilePoints.Add(new ContourPoint(currentProfilePoint, null));
+                treadProfilePoints.Add(new ContourPoint(currentProfilePoint, nosingChamfer));
             }
             
-            // Close the profile back to the top-start position
-            Point closingPoint = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + Rise);
-            treadProfilePoints.Add(new ContourPoint(closingPoint, null));
+            // 5. Back of Landing (moves horizontally from the last nosing to cover the landing)
+            Point backOfLanding = currentProfilePoint.MoveTowards(runDirection, Landing + overshoot);
+            treadProfilePoints.Add(new ContourPoint(backOfLanding, null));
+
+            // 6. Top Right Air (above the landing)
+            Point topRightAir = new Point(backOfLanding.X, backOfLanding.Y, backOfLanding.Z + overshoot);
+            treadProfilePoints.Add(new ContourPoint(topRightAir, null));
 
             // Create the cutting plate and apply the BooleanCut
             ContourPlate treadCutout = new ContourPlate()
@@ -179,8 +205,8 @@ namespace ConcreteStair
             };
 
             // To avoid microscopic face rendering bugs in Tekla, we overshoot the cut boundary 
-            // backwards along the slope by 500mm so it completely slices through the front face.
-            double overshoot = 500d.ToMm();
+            // backwards along the slope by a small amount so it completely slices through the front face.
+            double overshoot = 10d.ToMm();
             Point s0_overshoot = s0.MoveTowards(runDirection, -overshoot);
             double slopeZ = (sTop.Z - s0.Z) / Run;
             s0_overshoot.Z = s0.Z - (overshoot * slopeZ);
@@ -192,7 +218,7 @@ namespace ConcreteStair
             soffitCutout.AddContourPoint(new ContourPoint(s0_overshoot, null));
 
             // Point 3: Bottom-front bounding box corner (deep underground)
-            double deepZ = Math.Min(s0_overshoot.Z, StartPoint.Z - StairHeight) - 1000d.ToMm();
+            double deepZ = Math.Min(s0_overshoot.Z, StartPoint.Z - StairHeight) - 10d.ToMm();
             Point bottomFront = new Point(s0_overshoot.X, s0_overshoot.Y, deepZ);
             soffitCutout.AddContourPoint(new ContourPoint(bottomFront, null));
 
