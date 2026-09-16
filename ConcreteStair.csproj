@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<Copyright>Copyright © 1992-$([System.DateTime]::Now.ToString("yyyy")) Trimble Solutions Corporation and its licensors. All rights reserved.</Copyright>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<OutputPath>Installer/BuildDrop</OutputPath>
+		<RootNamespace>ConcreteStair</RootNamespace>
+		<AssemblyName>ConcreteStair</AssemblyName>
+		<OutputType>Library</OutputType>
+		<BaseOutputPath>C:\Users\luis4\OneDrive\Escritorio\TempBuild</BaseOutputPath>
+        <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+	</PropertyGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="set envDir=2026.0\Environments\common\extensions\ConcreteStair&#xA;set tsDirA=C:\ProgramData\Trimble\Tekla Structures\&#xA;&#xA;if $(ConfigurationName) == Debug (&#xA;    :: Check if the target directory exists and create it if not&#xA;    IF NOT EXIST &quot;%25tsDirA%25%25envDir%25&quot; MKDIR &quot;%25tsDirA%25%25envDir%25&quot;&#xA;    &#xA;    :: Now perform the copy if the base directory exists (which it should if the above succeeded or it already existed)&#xA;    if exist &quot;%25tsDirA%25&quot; xcopy &quot;$(TargetDir)*$(TargetExt)&quot; &quot;%25tsDirA%25\%25envDir%25&quot; /y /c /q&#xA;)" />
+	</Target>
+	<ItemGroup>
+	  <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
+      <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Tekla.Core\Tekla.Core\Tekla.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="Tekla.Structures">
+	    <HintPath>..\..\DLLs\Tekla.Structures.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Tekla.Structures.Datatype">
+	    <HintPath>..\..\DLLs\Tekla.Structures.Datatype.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Tekla.Structures.Dialog">
+	    <HintPath>..\..\DLLs\Tekla.Structures.Dialog.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Tekla.Structures.Model">
+	    <HintPath>..\..\DLLs\Tekla.Structures.Model.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Tekla.Structures.Plugins">
+	    <HintPath>..\..\DLLs\Tekla.Structures.Plugins.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+</Project>

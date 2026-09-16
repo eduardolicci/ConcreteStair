@@ -1,0 +1,13 @@
+# Visual Studio IDE and user-specific files
+.vs/
+*.user
+*.suo
+
+# Build output folders
+[Bb]in/
+[Oo]bj/
+[Ii]nstaller/
+
+
+# Logs and caches
+*.log
