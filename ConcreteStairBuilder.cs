@@ -23,6 +23,7 @@ namespace ConcreteStair
         public double FirstRiser { get; set; }
         public double StairWidthProfile { get; set; }
         public double NosingRadius { get; set; }
+        public double Undercut { get; set; }
 
         public ConcreteStairBuilder(Point startPoint, Point endPoint)
         {
@@ -107,6 +108,12 @@ namespace ConcreteStair
 
             // 3. Bottom of Front Face (directly below the first nosing)
             Point bottomFrontFace = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z - overshoot);
+            if (Undercut > 0)
+            {
+                double undercutAtFloor = Undercut;
+                double undercutAtOvershoot = undercutAtFloor + undercutAtFloor * (overshoot / actualFirstRiser);
+                bottomFrontFace = bottomFrontFace.MoveTowards(runDirection, undercutAtOvershoot);
+            }
             treadProfilePoints.Add(new ContourPoint(bottomFrontFace, null));
 
             // 4. First Nosing
@@ -117,10 +124,13 @@ namespace ConcreteStair
             for (int i = 0; i < NumberOfTreads; i++)
             {
                 // Step horizontally to the back of the tread (Inner corner of the stair)
-                currentProfilePoint = currentProfilePoint.MoveTowards(runDirection, treadRunLength);
-                treadProfilePoints.Add(new ContourPoint(currentProfilePoint, null));
+                // We add Undercut to slant the riser backwards
+                Point innerCorner = currentProfilePoint.MoveTowards(runDirection, treadRunLength + Undercut);
+                treadProfilePoints.Add(new ContourPoint(innerCorner, null));
 
                 // Step vertically to the top of the next riser (Outer corner / Nosing of the stair)
+                // The next nosing geometry (run/rise) does not change
+                currentProfilePoint = currentProfilePoint.MoveTowards(runDirection, treadRunLength);
                 currentProfilePoint = new Point(currentProfilePoint.X, currentProfilePoint.Y, currentProfilePoint.Z + treadRiseHeight);
                 treadProfilePoints.Add(new ContourPoint(currentProfilePoint, nosingChamfer));
             }

@@ -54,6 +54,8 @@ namespace ConcreteStair
             this.label9 = new System.Windows.Forms.Label();
             this.nosingRadiusBox = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.undercutBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.ParametersTabPage.SuspendLayout();
@@ -117,6 +119,8 @@ namespace ConcreteStair
             this.structuresExtender.SetAttributeName(this.ParametersTabPage, null);
             this.structuresExtender.SetAttributeTypeName(this.ParametersTabPage, null);
             this.structuresExtender.SetBindPropertyName(this.ParametersTabPage, null);
+            this.ParametersTabPage.Controls.Add(this.label11);
+            this.ParametersTabPage.Controls.Add(this.undercutBox);
             this.ParametersTabPage.Controls.Add(this.label10);
             this.ParametersTabPage.Controls.Add(this.nosingRadiusBox);
             this.ParametersTabPage.Controls.Add(this.label9);
@@ -404,6 +408,30 @@ namespace ConcreteStair
             this.nosingRadiusBox.Size = new System.Drawing.Size(132, 22);
             this.nosingRadiusBox.TabIndex = 20;
             // 
+            // label11
+            // 
+            this.structuresExtender.SetAttributeName(this.label11, null);
+            this.structuresExtender.SetAttributeTypeName(this.label11, null);
+            this.label11.AutoSize = true;
+            this.structuresExtender.SetBindPropertyName(this.label11, null);
+            this.label11.Location = new System.Drawing.Point(520, 267);
+            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(102, 16);
+            this.label11.TabIndex = 21;
+            this.label11.Text = "Undercut";
+            // 
+            // undercutBox
+            // 
+            this.structuresExtender.SetAttributeName(this.undercutBox, "undercutBox");
+            this.structuresExtender.SetAttributeTypeName(this.undercutBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.undercutBox, null);
+            this.undercutBox.Location = new System.Drawing.Point(523, 286);
+            this.undercutBox.Margin = new System.Windows.Forms.Padding(4);
+            this.undercutBox.Name = "undercutBox";
+            this.undercutBox.Size = new System.Drawing.Size(132, 22);
+            this.undercutBox.TabIndex = 22;
+            // 
             // MainForm
             // 
             this.structuresExtender.SetAttributeName(this, null);
@@ -452,5 +480,7 @@ namespace ConcreteStair
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox nosingRadiusBox;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox undercutBox;
+        private System.Windows.Forms.Label label11;
     }
 }

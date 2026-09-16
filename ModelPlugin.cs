@@ -46,6 +46,8 @@ namespace ConcreteStair
         [StructuresField("nosingRadiusBox")]
         public double nosingRadiusBox;
 
+        [StructuresField("undercutBox")]
+        public double undercutBox;
 
         #endregion
     }
@@ -65,6 +67,7 @@ namespace ConcreteStair
         double floorTickness;
         double treadTickness;
         double nosingRadiusBox;
+        double undercutBox;
         string alignmentBox;
         double riseBox;
         double numberOfTreadsBox;
@@ -143,6 +146,7 @@ namespace ConcreteStair
                 FloorThickness = floorTickness,
                 TreadThickness = treadTickness,
                 NosingRadius = nosingRadiusBox,
+                Undercut = undercutBox,
                 Alignment = alignmentBox,
                 Rise = riseBox,
                 NumberOfTreads = numberOfTreadsBox,
@@ -167,6 +171,7 @@ namespace ConcreteStair
             stairWidthBox = Data.stairWidthBox.ToMm();
             treadTickness = Data.treadTickness.ToMm();
             nosingRadiusBox = Data.nosingRadiusBox.ToMm();
+            undercutBox = Data.undercutBox.ToMm();
         }
         #endregion
     }
