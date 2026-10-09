@@ -49,6 +49,32 @@ namespace ConcreteStair
         [StructuresField("undercutBox")]
         public double undercutBox;
 
+        [StructuresField("leftStringer")]
+        public int createLeftStringerBox;
+
+        [StructuresField("rightStringer")]
+        public int createRightStringerBox;
+
+        [StructuresField("topPerpOffsetBox")]
+        public double topPerpOffsetBox;
+
+        [StructuresField("bottomPerpOffsetBox")]
+        public double bottomPerpOffsetBox;
+
+        [StructuresField("bottomEndOffsetBox")]
+        public double bottomEndOffsetBox;
+
+        [StructuresField("topEndOffsetBox")]
+        public double topEndOffsetBox;
+
+        [StructuresField("stringerThick")]
+        public double stringerThicknessBox;
+
+        [StructuresField("slabTickness")]
+        public double slabTickness;
+
+        [StructuresField("slabLenght")]
+        public double slabLenght;
         #endregion
     }
 
@@ -73,6 +99,15 @@ namespace ConcreteStair
         double numberOfTreadsBox;
         double firstRiserBox;
         double stairWidthBox;
+        int createLeftStringerBox;
+        int createRightStringerBox;
+        double topPerpOffsetBox;
+        double bottomPerpOffsetBox;
+        double bottomEndOffsetBox;
+        double topEndOffsetBox;
+        double stringerThicknessBox;
+        double slabTickness;
+        double slabLenght;
 
 
         #endregion
@@ -151,7 +186,16 @@ namespace ConcreteStair
                 Rise = riseBox,
                 NumberOfTreads = numberOfTreadsBox,
                 FirstRiser = firstRiserBox,
-                StairWidthProfile = stairWidthBox
+                StairWidthProfile = stairWidthBox,
+                CreateLeftStringer = createLeftStringerBox == 1,
+                CreateRightStringer = createRightStringerBox == 1,
+                TopPerpendicularOffset = topPerpOffsetBox,
+                BottomPerpendicularOffset = bottomPerpOffsetBox,
+                BottomEndOffset = bottomEndOffsetBox,
+                TopEndOffset = topEndOffsetBox,
+                StringerThickness = stringerThicknessBox,
+                SlabThickness = slabTickness,
+                BottomLanding = slabLenght
             };
 
             builder.BuildStair();
@@ -172,6 +216,15 @@ namespace ConcreteStair
             treadTickness = Data.treadTickness.ToMm();
             nosingRadiusBox = Data.nosingRadiusBox.ToMm();
             undercutBox = Data.undercutBox.ToMm();
+            createLeftStringerBox = Data.createLeftStringerBox;
+            createRightStringerBox = Data.createRightStringerBox;
+            topPerpOffsetBox = Data.topPerpOffsetBox.ToMm();
+            bottomPerpOffsetBox = Data.bottomPerpOffsetBox.ToMm();
+            bottomEndOffsetBox = Data.bottomEndOffsetBox.ToMm();
+            topEndOffsetBox = Data.topEndOffsetBox.ToMm();
+            stringerThicknessBox = Data.stringerThicknessBox.ToMm();
+            slabTickness = Data.slabTickness.ToMm();
+            slabLenght = Data.slabLenght.ToMm();
         }
         #endregion
     }

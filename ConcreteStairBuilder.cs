@@ -25,6 +25,16 @@ namespace ConcreteStair
         public double NosingRadius { get; set; }
         public double Undercut { get; set; }
 
+        public bool CreateLeftStringer { get; set; }
+        public bool CreateRightStringer { get; set; }
+        public double TopPerpendicularOffset { get; set; }
+        public double BottomPerpendicularOffset { get; set; }
+        public double BottomEndOffset { get; set; }
+        public double TopEndOffset { get; set; }
+        public double StringerThickness { get; set; }
+        public double SlabThickness { get; set; }
+        public double BottomLanding { get; set; }
+
         public ConcreteStairBuilder(Point startPoint, Point endPoint)
         {
             StartPoint = startPoint;
@@ -43,29 +53,42 @@ namespace ConcreteStair
             // 3. Cut out the jagged treads from the top
             CutTreads(stairBody, runDirection);
 
-            // 4. Cut out the soffit/landing from the bottom
+            // 4. Cut out the sloped soffit from the bottom
             CutSoffit(stairBody, runDirection);
 
+            // 5. Create Left/Right parametric stringers
+            CreateStringers(runDirection);
+
+            // Commit the structural changes
             new Model().CommitChanges();
         }
 
         private Beam CreateMainStairBody(Vector runDirection)
         {
             Beam stair = new Beam();
-            stair.StartPoint = StartPoint;
+            double safeDrop = Math.Max(SlabThickness, 1000d.ToMm());
+            double totalProfileHeight = StairHeight + safeDrop;
+
+            Point p1 = StartPoint.MoveTowards(runDirection, -BottomLanding);
+            p1.Z -= safeDrop;
+            stair.StartPoint = p1;
 
             // If the user provided a Run, use it to calculate the length, otherwise use the picked endpoint natively.
             if (Run <= 0)
             {
-                stair.EndPoint = EndPoint;
+                Point p2 = new Point(EndPoint.X, EndPoint.Y, EndPoint.Z);
+                p2.Z -= safeDrop;
+                stair.EndPoint = p2;
             }
             else
             {
-                stair.EndPoint = StartPoint.MoveTowards(runDirection, Run + Landing);
+                Point p2 = StartPoint.MoveTowards(runDirection, Run + Landing);
+                p2.Z -= safeDrop;
+                stair.EndPoint = p2;
             }
 
             stair.Material.MaterialString = "Concrete_Undefined";
-            stair.Profile.ProfileString = $"{StairHeight}X{StairWidth}";
+            stair.Profile.ProfileString = totalProfileHeight.ToString(System.Globalization.CultureInfo.InvariantCulture) + "X" + StairWidth.ToString(System.Globalization.CultureInfo.InvariantCulture);
             stair.Class = "4";
             stair.Position.Depth = Position.DepthEnum.FRONT;
 
@@ -99,20 +122,19 @@ namespace ConcreteStair
             double overshoot = 10d.ToMm();
 
             // 1. Top Left Air (above and behind the start point)
-            Point topLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + Rise + overshoot).MoveTowards(runDirection, -overshoot);
+            Point topLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + Rise + overshoot).MoveTowards(runDirection, -BottomLanding - overshoot);
             treadProfilePoints.Add(new ContourPoint(topLeftAir, null));
 
             // 2. Bottom Left Air (below and behind the start point)
-            Point bottomLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z - overshoot).MoveTowards(runDirection, -overshoot);
+            // The cut must not go below Z = StartPoint.Z in the bottom landing area
+            Point bottomLeftAir = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z).MoveTowards(runDirection, -BottomLanding - overshoot);
             treadProfilePoints.Add(new ContourPoint(bottomLeftAir, null));
 
             // 3. Bottom of Front Face (directly below the first nosing)
-            Point bottomFrontFace = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z - overshoot);
+            Point bottomFrontFace = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z);
             if (Undercut > 0)
             {
-                double undercutAtFloor = Undercut;
-                double undercutAtOvershoot = undercutAtFloor + undercutAtFloor * (overshoot / actualFirstRiser);
-                bottomFrontFace = bottomFrontFace.MoveTowards(runDirection, undercutAtOvershoot);
+                bottomFrontFace = bottomFrontFace.MoveTowards(runDirection, Undercut);
             }
             treadProfilePoints.Add(new ContourPoint(bottomFrontFace, null));
 
@@ -146,7 +168,7 @@ namespace ConcreteStair
             // Create the cutting plate and apply the BooleanCut
             ContourPlate treadCutout = new ContourPlate()
             {
-                Profile = new Profile { ProfileString = $"PL{StairWidthProfile * 2}" },
+                Profile = new Profile { ProfileString = "PL" + (StairWidthProfile * 2).ToString() },
                 Material = new Material { MaterialString = "Concrete_Undefined" },
                 Class = BooleanPart.BooleanOperativeClassName,
                 Position = new Position { Depth = Position.DepthEnum.MIDDLE }
@@ -185,7 +207,6 @@ namespace ConcreteStair
             double verticalDrop = TreadThickness / cosTheta;
 
             // 2. Define the theoretical starting intercept of the inner corner line at the front face (C0)
-            // The first nosing is at Z + actualFirstRiser. The inner corner line is lower by one treadRiseHeight.
             Point c0 = new Point(StartPoint.X, StartPoint.Y, StartPoint.Z + actualFirstRiser - treadRiseHeight);
             Point s0 = new Point(c0.X, c0.Y, c0.Z - verticalDrop);
 
@@ -194,52 +215,54 @@ namespace ConcreteStair
             cTop.Z = c0.Z + (Rise - actualFirstRiser);
             Point sTop = new Point(cTop.X, cTop.Y, cTop.Z - verticalDrop);
 
-            // 4. Determine where the sloped soffit intersects the horizontal landing soffit
-            double landingSoffitZ = StartPoint.Z + Rise - FloorThickness;
-            
-            // Parametric line equation: Z(t) = s0.Z + t * (sTop.Z - s0.Z)
-            // Solve for t when Z(t) = landingSoffitZ
-            double t = (landingSoffitZ - s0.Z) / (sTop.Z - s0.Z);
-            
-            // Find the intersection point
-            Point intersectionPt = s0.MoveTowards(runDirection, Run * t);
-            intersectionPt.Z = landingSoffitZ;
+            // 4. Determine where the sloped soffit intersects the top horizontal landing soffit
+            double topLandingSoffitZ = StartPoint.Z + Rise - FloorThickness;
+            double tTop = (topLandingSoffitZ - s0.Z) / (sTop.Z - s0.Z);
+            Point topIntersectionPt = s0.MoveTowards(runDirection, Run * tTop);
+            topIntersectionPt.Z = topLandingSoffitZ;
 
-            // 5. Define the cut polygon (encompassing everything below the stair)
+            // 5. Determine where the sloped soffit intersects the bottom horizontal landing soffit
+            double bottomLandingSoffitZ = StartPoint.Z - SlabThickness;
+            double tBot = (bottomLandingSoffitZ - s0.Z) / (sTop.Z - s0.Z);
+            Point botIntersectionPt = s0.MoveTowards(runDirection, Run * tBot);
+            botIntersectionPt.Z = bottomLandingSoffitZ;
+
+            // 6. Define the cut polygon (encompassing everything below the stair)
             ContourPlate soffitCutout = new ContourPlate()
             {
-                Profile = new Profile { ProfileString = $"PL{StairWidthProfile * 2}" },
+                Profile = new Profile { ProfileString = "PL" + (StairWidthProfile * 2).ToString() },
                 Material = new Material { MaterialString = "Concrete_Undefined" },
                 Class = BooleanPart.BooleanOperativeClassName,
                 Position = new Position { Depth = Position.DepthEnum.MIDDLE }
             };
 
-            // To avoid microscopic face rendering bugs in Tekla, we overshoot the cut boundary 
-            // backwards along the slope by a small amount so it completely slices through the front face.
             double overshoot = 10d.ToMm();
-            Point s0_overshoot = s0.MoveTowards(runDirection, -overshoot);
-            double slopeZ = (sTop.Z - s0.Z) / Run;
-            s0_overshoot.Z = s0.Z - (overshoot * slopeZ);
 
-            // Point 1: The intersection of slope and landing soffit
-            soffitCutout.AddContourPoint(new ContourPoint(intersectionPt, null));
-
-            // Point 2: The start of the sloped soffit (overshot)
-            soffitCutout.AddContourPoint(new ContourPoint(s0_overshoot, null));
-
-            // Point 3: Bottom-front bounding box corner (deep underground)
-            double deepZ = Math.Min(s0_overshoot.Z, StartPoint.Z - StairHeight) - 10d.ToMm();
-            Point bottomFront = new Point(s0_overshoot.X, s0_overshoot.Y, deepZ);
-            soffitCutout.AddContourPoint(new ContourPoint(bottomFront, null));
-
-            // Point 4: Bottom-back bounding box corner (overshot past the landing)
-            Point bottomBack = StartPoint.MoveTowards(runDirection, Run + Landing + overshoot);
-            bottomBack.Z = deepZ;
-            soffitCutout.AddContourPoint(new ContourPoint(bottomBack, null));
-
-            // Point 5: Top-back landing soffit corner
-            Point topBack = new Point(bottomBack.X, bottomBack.Y, landingSoffitZ);
+            // Point 1: Top-back top landing soffit corner
+            Point topBack = StartPoint.MoveTowards(runDirection, Run + Landing + overshoot);
+            topBack.Z = topLandingSoffitZ;
             soffitCutout.AddContourPoint(new ContourPoint(topBack, null));
+
+            // Point 2: The intersection of slope and top landing soffit
+            soffitCutout.AddContourPoint(new ContourPoint(topIntersectionPt, null));
+
+            // Point 3: The intersection of slope and bottom landing soffit
+            soffitCutout.AddContourPoint(new ContourPoint(botIntersectionPt, null));
+
+            // Point 4: Bottom-back of bottom landing (overshot backward)
+            Point botBack = botIntersectionPt.MoveTowards(runDirection, -BottomLanding - Run * tBot - overshoot);
+            botBack.Z = bottomLandingSoffitZ;
+            soffitCutout.AddContourPoint(new ContourPoint(botBack, null));
+
+            // Point 5: Bottom-front bounding box corner (deep underground, moved back)
+            double safeDrop = Math.Max(SlabThickness, 1000d.ToMm());
+            double deepZ = StartPoint.Z - safeDrop - 50d.ToMm();
+            Point bottomDeepBack = new Point(botBack.X, botBack.Y, deepZ);
+            soffitCutout.AddContourPoint(new ContourPoint(bottomDeepBack, null));
+
+            // Point 6: Bottom-front bounding box corner (deep underground, moved forward)
+            Point bottomDeepFront = new Point(topBack.X, topBack.Y, deepZ);
+            soffitCutout.AddContourPoint(new ContourPoint(bottomDeepFront, null));
 
             soffitCutout.Insert();
 
@@ -252,8 +275,133 @@ namespace ConcreteStair
             soffitBooleanCut.SetOperativePart(soffitCutout);
             soffitBooleanCut.Insert();
             
-            soffitCutout.Delete();
+            soffitCutout.Delete(); // Clean up the operative part
+        }
+
+        private void CreateStringers(Vector runDirection)
+        {
+            if (!CreateLeftStringer && !CreateRightStringer) return;
+
+            double actualFirstRiser = FirstRiser <= 0 ? 7d.ToMm() : FirstRiser;
+            double treadRunLength = Run / NumberOfTreads;
+
+            // Nosing line vectors
+            double n_dx = Run;
+            double n_dz = Rise - actualFirstRiser;
+            double n_len = Math.Sqrt(n_dx * n_dx + n_dz * n_dz);
+            double nx = n_dx / n_len;
+            double nz = n_dz / n_len;
+
+            // Perpendicular UP vector
+            double px = -nz;
+            double pz = nx;
+            double M = nz / nx;
+
+            // Top edge line parameters (L_top)
+            double top_px = px * TopPerpendicularOffset;
+            double top_pz = actualFirstRiser + pz * TopPerpendicularOffset;
+            double B_top = top_pz - M * top_px;
+
+            // Bottom edge line parameters (L_bot)
+            double bot_px = (treadRunLength + Undercut) - px * BottomPerpendicularOffset;
+            double bot_pz = actualFirstRiser - pz * BottomPerpendicularOffset;
+            double B_bot = bot_pz - M * bot_px;
+
+            // Boundary points X & Z
+            double X_front = -BottomLanding;
+            double X_back = Run + Landing + TopEndOffset;
+            double Z_bottom = BottomEndOffset;
+
+            List<Point> profile2D = new List<Point>();
+
+            // 1. Top-Front
+            double z_top_front = M * X_front + B_top;
+            profile2D.Add(new Point(X_front, 0, z_top_front));
+
+            // 2. Bottom-Front
+            double z_bot_front = M * X_front + B_bot;
+            if (z_bot_front < Z_bottom)
+            {
+                profile2D.Add(new Point(X_front, 0, Z_bottom));
+                double x_floor = (Z_bottom - B_bot) / M;
+                profile2D.Add(new Point(x_floor, 0, Z_bottom));
+            }
+            else
+            {
+                profile2D.Add(new Point(X_front, 0, z_bot_front));
+            }
+
+            // 3. Bottom-Back
+            double z_bot_back = M * X_back + B_bot;
+            if (z_bot_back < Z_bottom)
+            {
+                profile2D.Add(new Point(X_back, 0, Z_bottom));
+            }
+            else
+            {
+                profile2D.Add(new Point(X_back, 0, z_bot_back));
+            }
+
+            // 4. Top-Back
+            double z_top_back = M * X_back + B_top;
+            profile2D.Add(new Point(X_back, 0, z_top_back));
+
+            // Generate 3D lateral vectors
+            Vector leftDir = new Vector(-runDirection.Y, runDirection.X, 0).GetNormal();
+            Vector rightDir = new Vector(runDirection.Y, -runDirection.X, 0).GetNormal();
+
+            double leftFaceOffset = 0;
+            double rightFaceOffset = 0;
+            switch (Alignment)
+            {
+                case "Left":
+                    leftFaceOffset = StairWidth;
+                    rightFaceOffset = 0;
+                    break;
+                case "Right":
+                    leftFaceOffset = 0;
+                    rightFaceOffset = StairWidth;
+                    break;
+                default: // Middle
+                    leftFaceOffset = StairWidth / 2.0;
+                    rightFaceOffset = StairWidth / 2.0;
+                    break;
+            }
+
+            double thickness = StringerThickness <= 0 ? 200d.ToMm() : StringerThickness;
+
+            if (CreateLeftStringer)
+            {
+                double centerOffset = leftFaceOffset + thickness / 2.0;
+                InsertStringer(profile2D, runDirection, leftDir, centerOffset, thickness);
+            }
+
+            if (CreateRightStringer)
+            {
+                double centerOffset = rightFaceOffset + thickness / 2.0;
+                InsertStringer(profile2D, runDirection, rightDir, centerOffset, thickness);
+            }
+        }
+
+        private void InsertStringer(List<Point> profile2D, Vector runDir, Vector lateralDir, double lateralOffset, double thickness)
+        {
+            ContourPlate stringer = new ContourPlate();
+            stringer.Profile.ProfileString = "PL" + thickness.ToString();
+            stringer.Material.MaterialString = "Concrete_Undefined";
+            stringer.Class = "8"; // Different color class for visibility
+            stringer.Position.Depth = Position.DepthEnum.MIDDLE;
+
+            foreach (var p2d in profile2D)
+            {
+                Point p3d = new Point(
+                    StartPoint.X + runDir.X * p2d.X + lateralDir.X * lateralOffset,
+                    StartPoint.Y + runDir.Y * p2d.X + lateralDir.Y * lateralOffset,
+                    StartPoint.Z + p2d.Z
+                );
+                stringer.AddContourPoint(new ContourPoint(p3d, null));
+            }
+
+            stringer.Insert();
         }
     }
 }
-

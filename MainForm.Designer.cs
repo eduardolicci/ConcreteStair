@@ -56,9 +56,27 @@ namespace ConcreteStair
             this.label10 = new System.Windows.Forms.Label();
             this.undercutBox = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.StringersTabPage = new System.Windows.Forms.TabPage();
+            this.createLeftStringerBox = new System.Windows.Forms.CheckBox();
+            this.createRightStringerBox = new System.Windows.Forms.CheckBox();
+            this.stringerThicknessBox = new System.Windows.Forms.TextBox();
+            this.labelST = new System.Windows.Forms.Label();
+            this.topPerpOffsetBox = new System.Windows.Forms.TextBox();
+            this.labelTPO = new System.Windows.Forms.Label();
+            this.bottomPerpOffsetBox = new System.Windows.Forms.TextBox();
+            this.labelBPO = new System.Windows.Forms.Label();
+            this.topEndOffsetBox = new System.Windows.Forms.TextBox();
+            this.labelTEO = new System.Windows.Forms.Label();
+            this.bottomEndOffsetBox = new System.Windows.Forms.TextBox();
+            this.labelBEO = new System.Windows.Forms.Label();
+            this.labelSlabTickness = new System.Windows.Forms.Label();
+            this.slabTicknessBox = new System.Windows.Forms.TextBox();
+            this.labelSlabLenght = new System.Windows.Forms.Label();
+            this.slabLenghtBox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.ParametersTabPage.SuspendLayout();
+            this.StringersTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel
@@ -106,6 +124,7 @@ namespace ConcreteStair
             this.structuresExtender.SetAttributeTypeName(this.tabControl, null);
             this.structuresExtender.SetBindPropertyName(this.tabControl, null);
             this.tabControl.Controls.Add(this.ParametersTabPage);
+            this.tabControl.Controls.Add(this.StringersTabPage);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(4, 71);
             this.tabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -124,6 +143,10 @@ namespace ConcreteStair
             this.ParametersTabPage.Controls.Add(this.label10);
             this.ParametersTabPage.Controls.Add(this.nosingRadiusBox);
             this.ParametersTabPage.Controls.Add(this.label9);
+            this.ParametersTabPage.Controls.Add(this.slabTicknessBox);
+            this.ParametersTabPage.Controls.Add(this.labelSlabTickness);
+            this.ParametersTabPage.Controls.Add(this.slabLenghtBox);
+            this.ParametersTabPage.Controls.Add(this.labelSlabLenght);
             this.ParametersTabPage.Controls.Add(this.treadTickness);
             this.ParametersTabPage.Controls.Add(this.floorThickness);
             this.ParametersTabPage.Controls.Add(this.label8);
@@ -432,6 +455,165 @@ namespace ConcreteStair
             this.undercutBox.Size = new System.Drawing.Size(132, 22);
             this.undercutBox.TabIndex = 22;
             // 
+            // labelSlabTickness
+            // 
+            this.structuresExtender.SetAttributeName(this.labelSlabTickness, null);
+            this.structuresExtender.SetAttributeTypeName(this.labelSlabTickness, null);
+            this.labelSlabTickness.AutoSize = true;
+            this.structuresExtender.SetBindPropertyName(this.labelSlabTickness, null);
+            this.labelSlabTickness.Location = new System.Drawing.Point(202, 267);
+            this.labelSlabTickness.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelSlabTickness.Name = "labelSlabTickness";
+            this.labelSlabTickness.Size = new System.Drawing.Size(102, 16);
+            this.labelSlabTickness.TabIndex = 23;
+            this.labelSlabTickness.Text = "Slab tickness";
+            // 
+            // slabTicknessBox
+            // 
+            this.structuresExtender.SetAttributeName(this.slabTicknessBox, "slabTickness");
+            this.structuresExtender.SetAttributeTypeName(this.slabTicknessBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.slabTicknessBox, null);
+            this.slabTicknessBox.Location = new System.Drawing.Point(206, 286);
+            this.slabTicknessBox.Margin = new System.Windows.Forms.Padding(4);
+            this.slabTicknessBox.Name = "slabTicknessBox";
+            this.slabTicknessBox.Size = new System.Drawing.Size(132, 22);
+            this.slabTicknessBox.TabIndex = 24;
+            // 
+            // labelSlabLenght
+            // 
+            this.structuresExtender.SetAttributeName(this.labelSlabLenght, null);
+            this.structuresExtender.SetAttributeTypeName(this.labelSlabLenght, null);
+            this.labelSlabLenght.AutoSize = true;
+            this.structuresExtender.SetBindPropertyName(this.labelSlabLenght, null);
+            this.labelSlabLenght.Location = new System.Drawing.Point(360, 267);
+            this.labelSlabLenght.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelSlabLenght.Name = "labelSlabLenght";
+            this.labelSlabLenght.Size = new System.Drawing.Size(102, 16);
+            this.labelSlabLenght.TabIndex = 25;
+            this.labelSlabLenght.Text = "Slab Lenght";
+            // 
+            // slabLenghtBox
+            // 
+            this.structuresExtender.SetAttributeName(this.slabLenghtBox, "slabLenght");
+            this.structuresExtender.SetAttributeTypeName(this.slabLenghtBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.slabLenghtBox, null);
+            this.slabLenghtBox.Location = new System.Drawing.Point(363, 286);
+            this.slabLenghtBox.Margin = new System.Windows.Forms.Padding(4);
+            this.slabLenghtBox.Name = "slabLenghtBox";
+            this.slabLenghtBox.Size = new System.Drawing.Size(132, 22);
+            this.slabLenghtBox.TabIndex = 26;
+            // 
+            // 
+            // StringersTabPage
+            // 
+            this.structuresExtender.SetAttributeName(this.StringersTabPage, null);
+            this.structuresExtender.SetAttributeTypeName(this.StringersTabPage, null);
+            this.structuresExtender.SetBindPropertyName(this.StringersTabPage, null);
+            this.StringersTabPage.Controls.Add(this.createLeftStringerBox);
+            this.StringersTabPage.Controls.Add(this.createRightStringerBox);
+            this.StringersTabPage.Controls.Add(this.labelST);
+            this.StringersTabPage.Controls.Add(this.stringerThicknessBox);
+            this.StringersTabPage.Controls.Add(this.labelTPO);
+            this.StringersTabPage.Controls.Add(this.topPerpOffsetBox);
+            this.StringersTabPage.Controls.Add(this.labelBPO);
+            this.StringersTabPage.Controls.Add(this.bottomPerpOffsetBox);
+            this.StringersTabPage.Controls.Add(this.labelTEO);
+            this.StringersTabPage.Controls.Add(this.topEndOffsetBox);
+            this.StringersTabPage.Controls.Add(this.labelBEO);
+            this.StringersTabPage.Controls.Add(this.bottomEndOffsetBox);
+            this.StringersTabPage.Location = new System.Drawing.Point(4, 25);
+            this.StringersTabPage.Name = "StringersTabPage";
+            this.StringersTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.StringersTabPage.Size = new System.Drawing.Size(696, 279);
+            this.StringersTabPage.TabIndex = 3;
+            this.StringersTabPage.Text = "Stringers";
+            this.StringersTabPage.UseVisualStyleBackColor = true;
+            // createLeftStringerBox
+            this.structuresExtender.SetAttributeName(this.createLeftStringerBox, "leftStringer");
+            this.structuresExtender.SetAttributeTypeName(this.createLeftStringerBox, "Integer");
+            this.structuresExtender.SetBindPropertyName(this.createLeftStringerBox, "Checked");
+            this.createLeftStringerBox.AutoSize = true;
+            this.createLeftStringerBox.Location = new System.Drawing.Point(20, 20);
+            this.createLeftStringerBox.Name = "createLeftStringerBox";
+            this.createLeftStringerBox.Size = new System.Drawing.Size(150, 20);
+            this.createLeftStringerBox.TabIndex = 0;
+            this.createLeftStringerBox.Text = "Create Left Stringer";
+            // createRightStringerBox
+            this.structuresExtender.SetAttributeName(this.createRightStringerBox, "rightStringer");
+            this.structuresExtender.SetAttributeTypeName(this.createRightStringerBox, "Integer");
+            this.structuresExtender.SetBindPropertyName(this.createRightStringerBox, "Checked");
+            this.createRightStringerBox.AutoSize = true;
+            this.createRightStringerBox.Location = new System.Drawing.Point(200, 20);
+            this.createRightStringerBox.Name = "createRightStringerBox";
+            this.createRightStringerBox.Size = new System.Drawing.Size(150, 20);
+            this.createRightStringerBox.TabIndex = 1;
+            this.createRightStringerBox.Text = "Create Right Stringer";
+            // labelST
+            this.labelST.AutoSize = true;
+            this.labelST.Location = new System.Drawing.Point(20, 50);
+            this.labelST.Name = "labelST";
+            this.labelST.Size = new System.Drawing.Size(120, 16);
+            this.labelST.Text = "Stringer Thickness";
+            // stringerThicknessBox
+            this.structuresExtender.SetAttributeName(this.stringerThicknessBox, "stringerThick");
+            this.structuresExtender.SetAttributeTypeName(this.stringerThicknessBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.stringerThicknessBox, null);
+            this.stringerThicknessBox.Location = new System.Drawing.Point(20, 70);
+            this.stringerThicknessBox.Name = "stringerThicknessBox";
+            this.stringerThicknessBox.Size = new System.Drawing.Size(100, 22);
+            // labelTPO
+            this.labelTPO.AutoSize = true;
+            this.labelTPO.Location = new System.Drawing.Point(20, 100);
+            this.labelTPO.Name = "labelTPO";
+            this.labelTPO.Size = new System.Drawing.Size(130, 16);
+            this.labelTPO.Text = "Top Perp Offset";
+            // topPerpOffsetBox
+            this.structuresExtender.SetAttributeName(this.topPerpOffsetBox, "topPerpOffsetBox");
+            this.structuresExtender.SetAttributeTypeName(this.topPerpOffsetBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.topPerpOffsetBox, null);
+            this.topPerpOffsetBox.Location = new System.Drawing.Point(20, 120);
+            this.topPerpOffsetBox.Name = "topPerpOffsetBox";
+            this.topPerpOffsetBox.Size = new System.Drawing.Size(100, 22);
+            // labelBPO
+            this.labelBPO.AutoSize = true;
+            this.labelBPO.Location = new System.Drawing.Point(200, 100);
+            this.labelBPO.Name = "labelBPO";
+            this.labelBPO.Size = new System.Drawing.Size(130, 16);
+            this.labelBPO.Text = "Bottom Perp Offset";
+            // bottomPerpOffsetBox
+            this.structuresExtender.SetAttributeName(this.bottomPerpOffsetBox, "bottomPerpOffsetBox");
+            this.structuresExtender.SetAttributeTypeName(this.bottomPerpOffsetBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.bottomPerpOffsetBox, null);
+            this.bottomPerpOffsetBox.Location = new System.Drawing.Point(200, 120);
+            this.bottomPerpOffsetBox.Name = "bottomPerpOffsetBox";
+            this.bottomPerpOffsetBox.Size = new System.Drawing.Size(100, 22);
+            // labelTEO
+            this.labelTEO.AutoSize = true;
+            this.labelTEO.Location = new System.Drawing.Point(20, 150);
+            this.labelTEO.Name = "labelTEO";
+            this.labelTEO.Size = new System.Drawing.Size(100, 16);
+            this.labelTEO.Text = "Top End Offset";
+            // topEndOffsetBox
+            this.structuresExtender.SetAttributeName(this.topEndOffsetBox, "topEndOffsetBox");
+            this.structuresExtender.SetAttributeTypeName(this.topEndOffsetBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.topEndOffsetBox, null);
+            this.topEndOffsetBox.Location = new System.Drawing.Point(20, 170);
+            this.topEndOffsetBox.Name = "topEndOffsetBox";
+            this.topEndOffsetBox.Size = new System.Drawing.Size(100, 22);
+            // labelBEO
+            this.labelBEO.AutoSize = true;
+            this.labelBEO.Location = new System.Drawing.Point(200, 150);
+            this.labelBEO.Name = "labelBEO";
+            this.labelBEO.Size = new System.Drawing.Size(110, 16);
+            this.labelBEO.Text = "Bottom End Offset";
+            // bottomEndOffsetBox
+            this.structuresExtender.SetAttributeName(this.bottomEndOffsetBox, "bottomEndOffsetBox");
+            this.structuresExtender.SetAttributeTypeName(this.bottomEndOffsetBox, "Double");
+            this.structuresExtender.SetBindPropertyName(this.bottomEndOffsetBox, null);
+            this.bottomEndOffsetBox.Location = new System.Drawing.Point(200, 170);
+            this.bottomEndOffsetBox.Name = "bottomEndOffsetBox";
+            this.bottomEndOffsetBox.Size = new System.Drawing.Size(100, 22);
+            // 
             // MainForm
             // 
             this.structuresExtender.SetAttributeName(this, null);
@@ -482,5 +664,22 @@ namespace ConcreteStair
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox undercutBox;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox slabTicknessBox;
+        private System.Windows.Forms.Label labelSlabTickness;
+        private System.Windows.Forms.TextBox slabLenghtBox;
+        private System.Windows.Forms.Label labelSlabLenght;
+        private System.Windows.Forms.TabPage StringersTabPage;
+        private System.Windows.Forms.CheckBox createLeftStringerBox;
+        private System.Windows.Forms.CheckBox createRightStringerBox;
+        private System.Windows.Forms.TextBox stringerThicknessBox;
+        private System.Windows.Forms.Label labelST;
+        private System.Windows.Forms.TextBox topPerpOffsetBox;
+        private System.Windows.Forms.Label labelTPO;
+        private System.Windows.Forms.TextBox bottomPerpOffsetBox;
+        private System.Windows.Forms.Label labelBPO;
+        private System.Windows.Forms.TextBox topEndOffsetBox;
+        private System.Windows.Forms.Label labelTEO;
+        private System.Windows.Forms.TextBox bottomEndOffsetBox;
+        private System.Windows.Forms.Label labelBEO;
     }
 }
