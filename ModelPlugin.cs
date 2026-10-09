@@ -79,7 +79,6 @@ namespace ConcreteStair
     }
 
     [Plugin("ConcreteStair")]
-    [PluginUserInterface("ConcreteStair.MainForm")]
     public class ConcreteStair : PluginBase
     {
         #region Fields
